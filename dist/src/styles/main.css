@@ -1,0 +1,509 @@
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #f7fbff;
+  background: #07111b;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+html, body, #game-shell { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+body { background: #07111b; }
+button, input { font: inherit; }
+
+#game-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  cursor: crosshair;
+}
+
+#vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  /* No radial edge-darkening: it read as tunnel vision while skiing fast. */
+  background: linear-gradient(180deg, rgba(4, 13, 22, .045), transparent 48%, rgba(4, 10, 16, .07));
+  z-index: 3;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+}
+
+.hidden { display: none !important; }
+
+.menu-screen {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 4rem;
+  padding: clamp(2rem, 6vw, 6rem);
+  background: linear-gradient(90deg, rgba(4, 13, 22, .66) 0%, rgba(4, 13, 22, .23) 52%, rgba(4, 13, 22, .08) 100%);
+}
+
+.brand-lockup { align-self: end; max-width: 660px; text-shadow: 0 3px 26px rgba(0, 0, 0, .45); }
+.eyebrow { margin: 0 0 .8rem; letter-spacing: .22em; font-size: .72rem; font-weight: 800; color: #9fdcff; }
+h1 { margin: 0; font-size: clamp(4.4rem, 10vw, 9.5rem); line-height: .78; letter-spacing: -.07em; font-weight: 900; }
+h1 span { color: #a8dcf7; }
+.menu-wb-mark{display:flex;align-items:center;gap:.65rem;margin-bottom:.9rem}.menu-wb-shield{display:grid;place-items:center;width:64px;height:68px;clip-path:polygon(50% 0,94% 15%,88% 66%,75% 83%,50% 100%,25% 83%,12% 66%,6% 15%);background:linear-gradient(180deg,#b9efff,#3f9bcf 42%,#0b2334 43%,#071621);box-shadow:0 0 22px rgba(112,216,255,.16);font:1000 20px/1 Arial Black,Arial,sans-serif;letter-spacing:-.08em;color:#f3fdff;text-shadow:0 2px 6px rgba(0,0,0,.35)}.menu-wb-text{font-size:.78rem;font-weight:900;letter-spacing:.30em;color:#c9efff;padding-left:.02em}
+
+.subtitle { max-width: 540px; margin: 1.8rem 0 0; font-size: clamp(1rem, 1.5vw, 1.3rem); color: rgba(240, 249, 255, .82); }
+
+.menu-actions { width: min(330px, 31vw); display: grid; gap: .72rem; align-self: end; }
+button {
+  border: 1px solid rgba(255,255,255,.18);
+  color: #f8fbff;
+  background: rgba(7, 19, 30, .58);
+  backdrop-filter: blur(15px);
+  padding: .95rem 1.15rem;
+  border-radius: 10px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: transform .15s ease, background .15s ease, border-color .15s ease;
+}
+button:hover { transform: translateY(-1px); background: rgba(18, 43, 62, .76); border-color: rgba(165, 224, 255, .72); }
+button.primary { background: #eaf8ff; color: #0a2437; border-color: #eaf8ff; }
+button.primary:hover { background: #bde9ff; }
+.menu-footnote { position: absolute; left: clamp(2rem, 6vw, 6rem); bottom: 1.35rem; margin: 0; color: rgba(228, 241, 249, .55); font-size: .8rem; }
+
+.panel-screen, .modal-layer { display: grid; place-items: center; background: rgba(3, 10, 17, .48); backdrop-filter: blur(6px); }
+.glass-panel {
+  position: relative;
+  width: min(660px, calc(100vw - 2rem));
+  padding: 2rem;
+  background: rgba(7, 20, 31, .88);
+  border: 1px solid rgba(188, 226, 245, .18);
+  border-radius: 18px;
+  box-shadow: 0 30px 90px rgba(0,0,0,.38);
+  backdrop-filter: blur(18px);
+}
+.glass-panel.compact { width: min(360px, calc(100vw - 2rem)); display: grid; gap: .7rem; }
+#pause-menu .glass-panel.compact { width: min(330px, calc(100vw - 2rem)); padding: 1.55rem; gap: .75rem; }
+#pause-menu .glass-panel.compact h2 { margin-bottom: .25rem; }
+#pause-menu .glass-panel.compact button { min-height: 48px; }
+.glass-panel h2 { margin: 0 0 .8rem; font-size: 2.4rem; }
+.glass-panel h3 { margin-top: 1.4rem; margin-bottom: .6rem; }
+.glass-panel p, .glass-panel li { color: rgba(237, 247, 252, .76); line-height: 1.55; }
+.glass-panel ul { padding-left: 1.2rem; }
+.close-button { position: absolute; top: .8rem; right: .8rem; width: 2.5rem; height: 2.5rem; padding: 0; font-size: 1.5rem; border-radius: 999px; }
+.control-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: .65rem 1.2rem; }
+.control-row { display: flex; justify-content: space-between; gap: 1rem; padding: .45rem 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+.control-row strong { color: #bce8ff; }
+
+#hud { position: fixed; inset: 0; z-index: 8; pointer-events: none; }
+.hud-top-left, .hud-top-right { position: absolute; top: 1.2rem; display: flex; gap: .65rem; }
+.hud-top-left { left: 1.2rem; }
+.hud-top-right { right: 1.2rem; }
+.hud-card {
+  min-height: 64px;
+  padding: .7rem .9rem;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 12px;
+  background: rgba(4, 15, 24, .46);
+  box-shadow: inset 0 1px rgba(255,255,255,.05);
+  backdrop-filter: blur(12px);
+}
+.speed-card { display: flex; align-items: baseline; gap: .35rem; min-width: 112px; }
+.speed-card span { font-size: 2rem; line-height: 1; font-variant-numeric: tabular-nums; font-weight: 800; }
+.hud-card small { font-size: .66rem; letter-spacing: .08em; color: rgba(228, 241, 249, .66); }
+.altitude-card, .status-card { display: grid; align-content: center; gap: .15rem; }
+.altitude-card span, .status-card span { font-weight: 800; }
+.status-card { text-align: right; min-width: 122px; }
+#surface-label { color: #c6edff; }
+
+.hud-bottom { position: absolute; left: 50%; bottom: 1.15rem; transform: translateX(-50%); width: min(880px, calc(100vw - 2rem)); display: flex; justify-content: center; }
+#control-strip { display: flex; flex-wrap: wrap; justify-content: center; gap: .55rem 1rem; padding: .55rem .75rem; border-radius: 12px; background: rgba(4, 14, 23, .42); border: 1px solid rgba(255,255,255,.1); color: rgba(236,246,252,.7); font-size: .72rem; backdrop-filter: blur(10px); }
+kbd { display: inline-grid; place-items: center; min-width: 1.45rem; height: 1.35rem; margin-right: .18rem; padding: 0 .25rem; border: 1px solid rgba(255,255,255,.2); border-bottom-width: 2px; border-radius: 4px; color: #f8fcff; background: rgba(255,255,255,.08); font: 700 .64rem/1 ui-monospace, monospace; }
+
+.center-message { position: absolute; top: 21%; left: 50%; transform: translateX(-50%); padding: .7rem 1rem; border-radius: 10px; background: rgba(4, 15, 24, .72); border: 1px solid rgba(255,255,255,.15); font-weight: 800; text-align: center; box-shadow: 0 12px 40px rgba(0,0,0,.18); }
+
+#crosshair { position: fixed; z-index: 9; left: 50%; top: 50%; width: 12px; height: 12px; transform: translate(-50%,-50%); opacity: .35; pointer-events: none; }
+#crosshair::before, #crosshair::after { content: ''; position: absolute; background: white; border-radius: 1px; }
+#crosshair::before { width: 12px; height: 1px; top: 5.5px; }
+#crosshair::after { height: 12px; width: 1px; left: 5.5px; }
+#crosshair span { position: absolute; inset: 4px; border: 1px solid rgba(255,255,255,.7); border-radius: 50%; }
+
+#damage-flash { position: fixed; z-index: 7; inset: 0; pointer-events: none; opacity: 0; background: rgba(213, 236, 255, .16); transition: opacity .10s ease; }
+#damage-flash.active { opacity: 1; }
+
+@media (max-width: 760px) {
+  .menu-screen { grid-template-columns: 1fr; align-content: end; gap: 2rem; }
+  .menu-actions { width: 100%; }
+  .menu-footnote { display: none; }
+  h1 { font-size: clamp(4rem, 19vw, 7rem); }
+  .control-grid { grid-template-columns: 1fr; }
+  #control-strip { display: none; }
+  .hud-top-left { flex-direction: column; }
+}
+
+/* Freeride update UI */
+.modal-panel { width: min(780px, calc(100vw - 2rem)); max-height: min(88vh, 860px); overflow: hidden; }
+#modal-content { max-height: calc(min(88vh, 860px) - 4rem); overflow-y: auto; padding-right: .35rem; }
+.credit-card { min-width: 92px; display: grid; align-content: center; gap: .12rem; }
+.credit-card span { font-weight: 900; font-size: 1.1rem; color: #a9e9ff; }
+.status-card { min-width: 188px; }
+#run-label { color: #f7fbff; font-size: .78rem; letter-spacing: .04em; }
+
+.trick-popup {
+  position: absolute;
+  left: 50%;
+  top: 29%;
+  transform: translateX(-50%);
+  min-width: 280px;
+  padding: .85rem 1.15rem;
+  border-radius: 12px;
+  background: rgba(6, 18, 29, .78);
+  border: 1px solid rgba(137, 224, 255, .32);
+  text-align: center;
+  box-shadow: 0 16px 50px rgba(0,0,0,.24);
+  backdrop-filter: blur(12px);
+}
+.trick-popup strong { display: block; font-size: 1.05rem; letter-spacing: .05em; color: #e9faff; }
+.trick-popup span { display: block; margin-top: .25rem; color: #94dcff; font-weight: 800; font-size: .82rem; }
+
+.interaction-prompt {
+  position: absolute;
+  left: 50%;
+  bottom: 5.1rem;
+  transform: translateX(-50%);
+  padding: .55rem .9rem;
+  border-radius: 10px;
+  background: rgba(4, 15, 24, .72);
+  border: 1px solid rgba(255,255,255,.16);
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+}
+
+.run-grid { display: grid; gap: .65rem; margin-top: 1rem; }
+.run-card {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: .85rem;
+  align-items: center;
+  text-align: left;
+}
+.run-card > span:last-child { display: grid; gap: .18rem; }
+.run-card small { color: rgba(235,247,253,.62); font-weight: 500; letter-spacing: 0; }
+.run-dot { width: 12px; height: 42px; border-radius: 99px; background: var(--run-color); box-shadow: 0 0 20px color-mix(in srgb, var(--run-color) 60%, transparent); }
+
+.challenge-grid { display: grid; gap: .65rem; margin-top: 1rem; }
+.challenge-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: .85rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.035);
+}
+.challenge-card > div:first-child { display: grid; gap: .24rem; }
+.challenge-card small { color: rgba(234,246,252,.6); }
+.challenge-card.complete { border-color: rgba(113, 225, 177, .32); background: rgba(65, 181, 130, .08); }
+.challenge-reward { min-width: 88px; text-align: right; color: #a9e9ff; font-weight: 900; }
+.challenge-reward small { display: block; margin-top: .2rem; white-space: nowrap; font-weight: 600; }
+.challenge-heading { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; }
+.challenge-heading h2 { margin-bottom:.3rem; }
+.challenge-stats { display:grid; grid-template-columns:auto auto; gap:.12rem .45rem; align-items:baseline; min-width:128px; padding:.65rem .75rem; border:1px solid rgba(159,220,255,.18); border-radius:12px; background:rgba(87,174,215,.07); }
+.challenge-stats strong, .challenge-stats b { font-size:1.15rem; color:#c8efff; }
+.challenge-stats span { font-size:.58rem; letter-spacing:.12em; color:rgba(229,246,253,.58); }
+.challenge-meta { display:flex; align-items:center; gap:.4rem; margin-bottom:.08rem; }
+.challenge-meta b, .challenge-meta em { display:inline-flex; align-items:center; min-height:18px; padding:.1rem .38rem; border-radius:99px; font-size:.56rem; font-style:normal; letter-spacing:.1em; }
+.challenge-meta b { background:rgba(255,255,255,.09); color:#d9eef8; }
+.challenge-meta em { color:rgba(216,237,247,.58); border:1px solid rgba(255,255,255,.08); }
+.challenge-card.challenge-expert { border-color:rgba(105,198,255,.20); background:linear-gradient(90deg,rgba(59,142,187,.075),rgba(255,255,255,.025)); }
+.challenge-card.challenge-elite { border-color:rgba(202,151,255,.28); background:linear-gradient(90deg,rgba(134,73,189,.12),rgba(49,140,184,.045)); box-shadow:inset 3px 0 rgba(188,125,255,.42); }
+.challenge-card.challenge-elite .challenge-meta b { background:rgba(173,105,230,.18); color:#ebd6ff; }
+
+
+.shop-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+.credit-pill { min-width: 105px; padding: .65rem .8rem; border-radius: 12px; text-align: center; background: rgba(115, 214, 255, .1); border: 1px solid rgba(147, 225, 255, .25); }
+.credit-pill strong { display: block; font-size: 1.4rem; color: #b7edff; }
+.credit-pill span { display: block; font-size: .58rem; letter-spacing: .15em; color: rgba(231,247,255,.58); }
+.gear-scroll { display: grid; gap: 1.2rem; margin-top: 1rem; }
+.gear-section h3 { margin: .1rem 0 .55rem; }
+.gear-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .55rem; }
+.gear-item {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  align-items: center;
+  gap: .65rem;
+  padding: .7rem;
+  text-align: left;
+}
+.gear-item > span:last-child { display: grid; gap: .12rem; }
+.gear-item small { color: #8fdcff; }
+.gear-item.equipped { border-color: rgba(125, 225, 255, .62); background: rgba(82, 192, 236, .12); opacity: 1; }
+.gear-item:disabled { cursor: default; transform: none; }
+.swatch { width: 32px; height: 32px; border-radius: 9px; background: var(--swatch); border: 1px solid rgba(255,255,255,.2); box-shadow: inset 0 1px rgba(255,255,255,.18); }
+
+@media (max-width: 760px) {
+  .gear-grid { grid-template-columns: 1fr; }
+  .shop-heading { align-items: center; }
+  .credit-card { display: none; }
+  .status-card { min-width: 140px; }
+}
+.shop-feedback { min-height: 1.2em; margin: .2rem 0 0; color: #ffb8a9 !important; font-weight: 700; }
+.lift-card { border-color: rgba(127, 228, 255, .28); }
+
+
+/* v0.17.3 free progression pass */
+.pass-hero { display:grid; grid-template-columns:1fr auto; gap:1.2rem; align-items:center; padding:1rem 1.05rem; border-radius:16px; background:linear-gradient(120deg,rgba(27,105,142,.28),rgba(116,67,158,.20) 60%,rgba(7,20,31,.25)); border:1px solid rgba(148,222,255,.22); box-shadow:inset 0 1px rgba(255,255,255,.05); }
+.pass-hero h2 { margin:.05rem 0 .25rem; font-size:2rem; }
+.pass-hero p:last-child { margin:.25rem 0 0; font-size:.88rem; }
+.pass-rank { width:112px; height:112px; border-radius:24px; display:grid; place-items:center; align-content:center; gap:.05rem; background:radial-gradient(circle at 40% 28%,rgba(191,238,255,.18),rgba(42,97,129,.08)); border:1px solid rgba(172,225,249,.26); box-shadow:0 14px 34px rgba(0,0,0,.18); text-align:center; }
+.pass-rank span { font-size:.53rem; letter-spacing:.13em; color:rgba(225,245,253,.6); }
+.pass-rank strong { font-size:2.35rem; line-height:1; color:#e8f9ff; }
+.pass-rank small { color:#9cdff7; font-size:.68rem; }
+.pass-summary { display:grid; grid-template-columns:auto 1fr; gap:.38rem .9rem; align-items:center; padding:.85rem 1rem; margin-top:.75rem; border:1px solid rgba(255,255,255,.13); border-radius:14px; background:rgba(255,255,255,.045); }
+.pass-summary > strong { font-size:1.05rem; letter-spacing:.08em; }
+.pass-summary > span { justify-self:end; color:rgba(229,246,253,.72); font-size:.78rem; }
+.pass-summary > small { grid-column:1/-1; color:#8fdcff; font-weight:800; letter-spacing:.05em; }
+.pass-progress { grid-column:1/-1; height:10px; overflow:hidden; border-radius:99px; background:rgba(255,255,255,.08); box-shadow:inset 0 1px 4px rgba(0,0,0,.22); }
+.pass-progress i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,rgba(79,190,237,.9),rgba(178,127,239,.9),rgba(223,248,255,.98)); box-shadow:0 0 18px rgba(126,213,249,.4); }
+.pass-actions { display:flex; justify-content:space-between; align-items:center; gap:.8rem; margin-top:.7rem; }
+.pass-actions button { padding:.7rem .9rem; }
+.pass-actions span { color:rgba(228,244,252,.58); font-size:.72rem; font-weight:800; letter-spacing:.06em; }
+.pass-track { position:relative; margin-top:.4rem; padding:.25rem .05rem .2rem; }
+.pass-track::before { content:''; position:absolute; left:25px; top:8px; bottom:8px; width:2px; background:linear-gradient(rgba(117,216,255,.22),rgba(176,111,232,.25)); pointer-events:none; }
+.pass-grid { display:grid; grid-template-columns:1fr; gap:.46rem; position:relative; }
+.pass-tier { width:100%; display:grid; grid-template-columns:40px 46px 1fr auto; align-items:center; gap:.68rem; padding:.68rem .75rem; text-align:left; position:relative; overflow:hidden; }
+.pass-tier::after { content:''; position:absolute; inset:0; opacity:0; background:linear-gradient(90deg,rgba(88,188,231,.08),rgba(170,102,230,.06)); transition:opacity .15s ease; pointer-events:none; }
+.pass-tier:hover::after { opacity:1; }
+.pass-tier > * { position:relative; z-index:1; }
+.pass-tier-number { width:36px; height:36px; display:grid; place-items:center; border-radius:12px; background:#132c3c; border:1px solid rgba(157,222,249,.18); font-weight:950; box-shadow:0 0 0 4px rgba(7,20,31,.9); }
+.pass-reward-icon { width:42px; height:32px; display:grid; place-items:center; border-radius:9px; background:rgba(255,255,255,.065); color:#aee8ff; font-size:.58rem; font-weight:950; letter-spacing:.05em; }
+.pass-reward-copy { display:grid; gap:.12rem; min-width:0; }
+.pass-reward-copy strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pass-tier small { color:#9edff7; font-weight:800; letter-spacing:.05em; }
+.pass-tier.locked { opacity:.46; filter:saturate(.65); }
+.pass-tier.claimed { opacity:.72; border-color:rgba(117,225,176,.24); background:rgba(74,173,128,.055); }
+.pass-tier.unlocked:not(.claimed) { border-color:rgba(124,220,255,.46); box-shadow:inset 3px 0 rgba(103,210,252,.48); }
+.pass-tier.milestone { border-color:rgba(194,139,245,.32); background:linear-gradient(90deg,rgba(125,70,166,.10),rgba(34,108,143,.045)); }
+.pass-milestone { font-style:normal; font-size:.52rem; letter-spacing:.11em; color:#d9b9f5; padding:.2rem .38rem; border-radius:99px; border:1px solid rgba(199,146,244,.22); }
+@media (max-width:760px){ .pass-hero{grid-template-columns:1fr;} .pass-rank{width:100%;height:auto;padding:.65rem;border-radius:12px;grid-template-columns:auto auto auto;gap:.6rem;} .pass-rank strong{font-size:1.5rem;} .pass-tier{grid-template-columns:36px 40px 1fr;} .pass-milestone{display:none;} .challenge-heading{display:grid;} }
+
+/* v0.3 trick line + Skipedia */
+.combo-card { min-width: 92px; display: grid; align-content: center; gap: .08rem; transition: transform .15s ease, border-color .15s ease; }
+.combo-card span { font-weight: 950; font-size: 1.15rem; color: #d8f6ff; }
+.combo-card b { font-size: .68rem; color: rgba(232,247,255,.68); font-variant-numeric: tabular-nums; }
+.combo-card.hot { transform: scale(1.035); border-color: rgba(143,229,255,.55); box-shadow: 0 0 26px rgba(81,189,235,.18); }
+.skipedia-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: .7rem; margin-top: 1rem; }
+.skipedia-grid section { padding: .8rem .9rem; border-radius: 12px; border: 1px solid rgba(255,255,255,.09); background: rgba(255,255,255,.035); }
+.skipedia-grid h3 { margin: 0 0 .35rem; color: #c9efff; font-size: 1rem; }
+.skipedia-grid p { margin: 0; font-size: .88rem; }
+@media (max-width: 760px) { .skipedia-grid { grid-template-columns: 1fr; } .combo-card { display: none; } }
+
+/* v0.12 Mountain Overhaul */
+.race-card { min-width: 126px; display: grid; align-content: center; gap: .08rem; text-align: right; }
+.race-card span { font-size: 1.25rem; font-weight: 900; font-variant-numeric: tabular-nums; color: #f4fbff; }
+.race-card b { font-size: .68rem; color: #9ee5ff; }
+.map-layer { display: grid; place-items: center; padding:.45rem; background: rgba(2, 9, 15, .78); backdrop-filter: blur(8px); z-index: 18; }
+.map-panel { width:min(1500px,98vw); height:min(960px,96vh); padding:.8rem 1rem .9rem; border-radius:20px; background:rgba(5,19,30,.96); border:1px solid rgba(169,226,250,.24); box-shadow:0 30px 90px rgba(0,0,0,.48); display:flex; flex-direction:column; }
+.map-header { display:flex; justify-content:space-between; gap:1rem; align-items:flex-start; position:relative; }
+.map-header h2 { margin:.1rem 0 .6rem; font-size:2rem; }
+.map-header .close-button { position:static; flex:0 0 auto; }
+#mountain-map-svg { width:100%; height:calc(100% - 92px); min-height:0; flex:1 1 auto; display:block; border-radius:16px; overflow:hidden; }
+.map-bg { fill:#0b2232; stroke:rgba(191,231,248,.14); stroke-width:2; }
+.map-mountain { fill:#17384a; stroke:#3e687c; stroke-width:2; opacity:.94; }
+.map-label { fill:#f7fcff; font-size:16px; font-weight:900; paint-order:stroke; stroke:#081b28; stroke-width:5px; stroke-linejoin:round; }
+.map-village rect { fill:#365d70; stroke:#8ecfe8; stroke-width:1.5; }
+.map-village text { fill:#f4fbff; font-size:10px; font-weight:900; text-anchor:middle; }
+#map-player-dot { fill:#fff; stroke:#0d82bd; stroke-width:4; filter:drop-shadow(0 0 8px rgba(255,255,255,.7)); }
+.map-help { margin:.7rem 0 0; text-align:center; color:rgba(235,247,252,.68); font-size:.78rem; }
+.weather-grid, .race-grid { display:grid; gap:.65rem; margin-top:1rem; }
+.weather-option, .race-option { width:100%; text-align:left; display:grid; gap:.18rem; }
+.weather-option small, .race-option small { color:rgba(235,247,253,.62); font-weight:500; letter-spacing:0; }
+.weather-option.active { border-color:rgba(142,224,255,.65); background:rgba(91,190,230,.12); }
+.race-option { grid-template-columns:1fr auto; align-items:center; }
+.race-option .race-best { color:#a9e9ff; font-weight:900; white-space:nowrap; }
+@media (max-width:760px){ .race-card{display:none;} .map-panel{width:99vw;height:98vh;padding:.55rem;} .map-header h2{font-size:1.5rem;} #mountain-map-svg .map-lift-label{font-size:9px;} }
+.level-card { min-width:78px; display:grid; align-content:center; gap:.08rem; }
+.level-card span { font-size:1.18rem; font-weight:950; color:#dff7ff; }
+.level-card b { font-size:.62rem; color:rgba(232,247,255,.62); font-variant-numeric:tabular-nums; }
+@media (max-width:760px){ .level-card{display:none;} }
+
+/* v0.12 map detail */
+#mountain-map-svg .map-lift-station { fill: #dff6ff; stroke: #274a5d; stroke-width: 2; }
+#mountain-map-svg .map-race-marker circle { fill: #fff; stroke: #e14950; stroke-width: 3; }
+#mountain-map-svg .map-race-marker text { fill: #eef9ff; font-size: 11px; font-weight: 800; letter-spacing: .07em; paint-order: stroke; stroke: #16303f; stroke-width: 3px; }
+#mountain-map-svg .map-discovery { fill: rgba(255,255,255,.16); stroke: rgba(255,255,255,.28); stroke-width: 1; }
+#mountain-map-svg .map-discovery.discovered { fill: #f2cf62; stroke: #fff2aa; stroke-width: 1.5; }
+#mountain-map-svg .map-destination { fill: none; stroke: #ffffff; stroke-width: 3; stroke-dasharray: 4 3; }
+.gear-item.level-locked { opacity: .58; }
+.gear-item.level-locked small { letter-spacing: .05em; }
+#mountain-map-svg .map-station circle { fill:#dff6ff; stroke:#1e647f; stroke-width:2.4; }
+#mountain-map-svg .map-station text { fill:#eefaff; font-size:11.5px; font-weight:850; paint-order:stroke; stroke:#102534; stroke-width:3.5px; }
+#mountain-map-svg .map-lift-label { fill:#bfefff; font-size:10.5px; font-weight:900; text-anchor:middle; paint-order:stroke; stroke:#081b28; stroke-width:3.5px; letter-spacing:.02em; }
+#mountain-map-svg .map-clickable { cursor:pointer; }
+#mountain-map-svg .map-clickable:hover circle { fill:#7fe4ff; stroke:#fff; }
+#map-waypoint-line { pointer-events:none; }
+
+/* v0.17.4 Mountain Pass summit chapter */
+.pass-chapters { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.45rem; margin:.7rem 0 .2rem; }
+.pass-chapters span { padding:.5rem .55rem; border:1px solid rgba(170,210,230,.16); border-radius:8px; background:rgba(9,24,34,.55); font-size:.66rem; font-weight:800; letter-spacing:.08em; text-align:center; color:#9fc4d6; }
+.pass-tier.summit-tier { border-color:rgba(210,177,255,.35); background:linear-gradient(110deg,rgba(41,24,61,.82),rgba(11,31,42,.86)); }
+.pass-tier.summit-tier .pass-tier-number { color:#e4c7ff; }
+.pass-tier.summit-tier .pass-reward-icon { box-shadow:0 0 0 1px rgba(215,177,255,.24),0 0 18px rgba(160,95,225,.12); }
+@media (max-width:720px){.pass-chapters{grid-template-columns:1fr 1fr;}}
+
+/* v0.17.10 replay editor */
+.replay-layer {
+  z-index: 26;
+  pointer-events: auto;
+  background: linear-gradient(180deg, rgba(2,8,14,.08) 0%, rgba(2,8,14,.18) 50%, rgba(2,8,14,.72) 100%);
+}
+.replay-topbar {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  top: 1rem;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 1rem;
+  align-items: start;
+  padding: .75rem .9rem;
+  border-radius: 14px;
+  border: 1px solid rgba(183,229,249,.18);
+  background: rgba(4,15,24,.64);
+  backdrop-filter: blur(12px);
+}
+.replay-topbar h2 { margin: .05rem 0 0; font-size: 1.45rem; }
+.replay-topbar .eyebrow { margin-bottom: .15rem; }
+.replay-topbar .close-button { position: static; }
+.replay-meta {
+  align-self: center;
+  color: #b9ebff;
+  font-size: .82rem;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-align: right;
+}
+.replay-controls {
+  position: absolute;
+  left: 50%;
+  bottom: 1rem;
+  transform: translateX(-50%);
+  width: min(1120px, calc(100vw - 2rem));
+  padding: .9rem;
+  border: 1px solid rgba(183,229,249,.2);
+  border-radius: 16px;
+  background: rgba(4,15,24,.82);
+  box-shadow: 0 22px 70px rgba(0,0,0,.34);
+  backdrop-filter: blur(16px);
+}
+.replay-row { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.replay-row button { padding: .62rem .78rem; min-height: 40px; }
+.replay-row button.active { border-color: rgba(121,221,255,.75); background: rgba(64,166,210,.2); }
+.replay-timeline { margin: .75rem 0 .55rem; }
+#replay-scrub { width: 100%; accent-color: #8bdfff; cursor: pointer; }
+.replay-time-row { display: flex; justify-content: space-between; gap: 1rem; margin-top: .25rem; font-size: .72rem; font-weight: 800; color: rgba(231,246,253,.68); font-variant-numeric: tabular-nums; }
+.replay-edit span { margin-left: auto; color: rgba(231,246,253,.52); font-size: .7rem; font-weight: 700; }
+@media (max-width: 760px) {
+  .replay-topbar { grid-template-columns: 1fr auto; }
+  .replay-meta { grid-column: 1 / -1; text-align: left; }
+  .replay-row button { flex: 1 1 auto; }
+  .replay-edit span { width: 100%; margin-left: 0; }
+}
+
+/* v0.17.12 expanded challenge ladder */
+.challenge-heading-expanded { margin-bottom:.8rem; }
+.challenge-heading-expanded > div:first-child { max-width:780px; }
+.challenge-difficulty-legend { display:flex; flex-wrap:wrap; gap:.45rem; margin:.4rem 0 1rem; }
+.challenge-difficulty-legend span { padding:.28rem .55rem; border-radius:999px; font-size:.62rem; font-weight:900; letter-spacing:.1em; border:1px solid rgba(255,255,255,.1); }
+.challenge-difficulty-legend .legend-elite { color:#ecd9ff; background:rgba(151,83,209,.16); border-color:rgba(190,128,245,.28); }
+.challenge-difficulty-legend .legend-expert { color:#d5f2ff; background:rgba(58,151,199,.13); border-color:rgba(91,190,239,.24); }
+.challenge-difficulty-legend .legend-hard { color:#ffe3ad; background:rgba(197,130,50,.12); border-color:rgba(236,176,92,.22); }
+.challenge-difficulty-legend .legend-standard { color:#d9e7ed; background:rgba(255,255,255,.05); }
+.challenge-difficulty-section { margin:1.15rem 0 1.75rem; padding-top:.25rem; }
+.challenge-difficulty-heading { display:flex; justify-content:space-between; gap:1rem; align-items:flex-end; padding:.7rem .8rem; border-radius:12px; background:rgba(255,255,255,.025); border:1px solid rgba(255,255,255,.08); }
+.challenge-difficulty-heading > div { display:flex; gap:.55rem; align-items:baseline; }
+.challenge-difficulty-heading span { font-size:1.08rem; font-weight:950; letter-spacing:.08em; }
+.challenge-difficulty-heading strong { font-size:.66rem; color:rgba(220,239,248,.58); letter-spacing:.09em; }
+.challenge-difficulty-heading small { max-width:620px; text-align:right; color:rgba(226,241,249,.62); }
+.challenge-section-elite .challenge-difficulty-heading { border-color:rgba(202,151,255,.24); background:linear-gradient(90deg,rgba(122,62,177,.12),rgba(255,255,255,.02)); }
+.challenge-section-expert .challenge-difficulty-heading { border-color:rgba(105,198,255,.18); background:linear-gradient(90deg,rgba(54,137,181,.09),rgba(255,255,255,.02)); }
+.challenge-section-hard .challenge-difficulty-heading { border-color:rgba(240,178,93,.16); background:linear-gradient(90deg,rgba(173,109,37,.07),rgba(255,255,255,.02)); }
+@media (max-width:760px){.challenge-difficulty-heading{align-items:flex-start;flex-direction:column}.challenge-difficulty-heading small{text-align:left}.challenge-heading-expanded{flex-direction:column}.challenge-stats{width:100%;grid-template-columns:auto auto auto auto auto auto}}
+
+/* v0.17.12 fifth Mountain Pass chapter */
+.pass-chapters.pass-chapters-five { grid-template-columns:repeat(5,minmax(0,1fr)); }
+.pass-tier.legend-tier { border-color:rgba(255,211,118,.40); background:linear-gradient(110deg,rgba(64,48,17,.88),rgba(17,30,36,.88)); box-shadow:inset 3px 0 rgba(255,208,91,.34); }
+.pass-tier.legend-tier .pass-tier-number { color:#ffe09c; }
+.pass-tier.legend-tier .pass-reward-icon { box-shadow:0 0 0 1px rgba(255,218,130,.28),0 0 20px rgba(232,184,70,.14); }
+@media (max-width:900px){.pass-chapters.pass-chapters-five{grid-template-columns:1fr 1fr 1fr}}
+@media (max-width:620px){.pass-chapters.pass-chapters-five{grid-template-columns:1fr 1fr}}
+
+/* v0.17.13 settings: compact skier-height control */
+.height-setting{display:grid;grid-template-columns:minmax(220px,1fr) auto;gap:.55rem .9rem;align-items:center;padding:.85rem 1rem;margin:.55rem 0 1.1rem;border:1px solid rgba(170,225,247,.14);border-radius:12px;background:rgba(255,255,255,.035)}
+.height-setting input[type=range]{width:100%;accent-color:#76d9f5}
+.height-setting strong{min-width:64px;text-align:right;color:#eafaff;font-size:1rem}
+.height-setting small{grid-column:1/-1;color:#9bb7c6}
+
+/* v0.17.19 two-mountain map legend */
+#mountain-map-svg .map-key rect { fill:rgba(5,18,28,.92); stroke:rgba(180,229,248,.35); stroke-width:1.5; }
+#mountain-map-svg .map-key-title { fill:#f5fbff; font-size:15px; font-weight:950; letter-spacing:.10em; }
+#mountain-map-svg .map-key-text { fill:#e9f6fb; font-size:12px; font-weight:850; letter-spacing:.06em; }
+#mountain-map-svg .map-run path { filter:drop-shadow(0 0 2px rgba(0,0,0,.28)); }
+#mountain-map-svg .map-network-lift path { pointer-events:none; }
+
+
+/* v0.17.26 satellite map: M now pulls the live 3D camera above the whole resort.
+   The old schematic remains as a compact clickable inset for waypoint selection. */
+.map-layer.satellite-mode {
+  place-items:start;
+  background:rgba(2,9,15,.06);
+  backdrop-filter:none;
+  pointer-events:none;
+}
+.map-layer.satellite-mode .map-panel {
+  width:min(430px,38vw);
+  height:min(470px,56vh);
+  margin:.7rem;
+  padding:.65rem .75rem .7rem;
+  background:rgba(5,19,30,.82);
+  border:1px solid rgba(169,226,250,.32);
+  box-shadow:0 16px 50px rgba(0,0,0,.34);
+  pointer-events:auto;
+}
+.map-layer.satellite-mode .map-header h2 { font-size:1.35rem; }
+.map-layer.satellite-mode #mountain-map-svg { height:330px; }
+.map-layer.satellite-mode #map-focus { display:none; }
+.map-layer.satellite-mode .map-help { font-size:.72rem; opacity:.82; margin-top:.35rem; }
+@media (max-width:760px){
+  .map-layer.satellite-mode .map-panel{width:min(360px,92vw);height:min(410px,50vh);}
+  .map-layer.satellite-mode #mountain-map-svg{height:280px;}
+}
+
+
+/* v0.17.29 satellite navigation overlay */
+.map-layer.satellite-mode { overflow:hidden; }
+.map-layer.satellite-mode .map-panel { position:relative; z-index:4; width:min(390px,35vw); height:min(505px,60vh); }
+.map-layer.satellite-mode #mountain-map-svg { height:360px; }
+#satellite-map-overlay { position:absolute; inset:0; width:100%; height:100%; z-index:2; pointer-events:none; overflow:visible; }
+.sat-piste-outline { fill:none; stroke:rgba(0,8,14,.88); stroke-width:10; stroke-linecap:round; stroke-linejoin:round; }
+.sat-piste { fill:none; stroke-width:5.2; stroke-linecap:round; stroke-linejoin:round; filter:drop-shadow(0 0 4px rgba(0,0,0,.8)); }
+.sat-lift { fill:none; stroke:#d7f3ff; stroke-width:2.2; stroke-dasharray:7 7; opacity:.92; }
+.sat-station circle { fill:#eafaff; stroke:#1b6988; stroke-width:2.5; }
+.sat-player circle:first-child { fill:rgba(71,226,255,.22); stroke:#8cecff; stroke-width:3; }
+.sat-player circle:last-child { fill:#fff; }
+.sat-waypoint circle { fill:none; stroke:#62e7ff; stroke-width:3; stroke-dasharray:5 4; }
+.sat-waypoint path { fill:#63e8ff; stroke:#fff; stroke-width:2; }
+.sat-overlay-key rect { fill:rgba(4,15,24,.82); stroke:rgba(177,229,250,.4); }
+.sat-overlay-key text { fill:#eefbff; font:800 10px Arial,sans-serif; letter-spacing:.035em; }
+#mountain-map-svg .map-run-label-pill rect, #satellite-map-overlay .sat-run-label-pill rect { fill:rgba(7,20,31,.86); stroke:rgba(190,234,248,.28); stroke-width:1.5; }
+#mountain-map-svg .map-run-label-pill text, #satellite-map-overlay .sat-run-label-pill text { fill:#fff; font:900 10.5px Arial,sans-serif; letter-spacing:.05em; text-anchor:middle; }
+#satellite-map-overlay .sat-run-label-pill text { font-size:12px; }
+.map-run-label-line { stroke:rgba(226,246,255,.52); stroke-width:1.5; stroke-dasharray:3 4; }
+@media (max-width:760px){.map-layer.satellite-mode .map-panel{width:min(350px,92vw);height:min(440px,52vh)}.map-layer.satellite-mode #mountain-map-svg{height:305px}.sat-overlay-key{display:none}}
+
+
+/* v0.18.0 multiplayer */
+.multiplayer-menu-button{position:relative;border-color:rgba(89,224,255,.42)!important;background:linear-gradient(135deg,rgba(17,65,86,.74),rgba(8,25,38,.86))!important}.multiplayer-menu-button span{font-size:.62em;letter-spacing:.12em;color:#73f0c4;margin-left:.45em}.multiplayer-hud{min-width:98px}.multiplayer-hud span{color:#76eaff!important}.mp-field{display:grid;gap:.4rem;margin:.9rem 0}.mp-field span{font-size:.72rem;font-weight:900;letter-spacing:.13em;text-transform:uppercase;color:#9fd9e8}.mp-field input{width:100%;box-sizing:border-box;border:1px solid rgba(151,222,240,.28);background:rgba(5,16,24,.78);color:#f3fbff;border-radius:10px;padding:.85rem .95rem;font:700 .92rem/1.2 system-ui}.mp-field input:focus{outline:2px solid rgba(87,220,255,.45);border-color:#65ddff}.mp-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin:.75rem 0}.mp-actions button{min-width:150px}.mp-divider{display:flex;align-items:center;gap:.8rem;margin:1rem 0;color:rgba(210,240,248,.5);font-size:.72rem;font-weight:900;letter-spacing:.15em}.mp-divider::before,.mp-divider::after{content:'';height:1px;background:rgba(161,218,232,.16);flex:1}.mp-room-code{font:1000 clamp(2.1rem,6vw,3.8rem)/1 system-ui;letter-spacing:.2em;color:#dffbff;text-align:center;padding:1rem;border-radius:14px;border:1px solid rgba(107,225,255,.3);background:rgba(10,34,47,.55);margin:.9rem 0}.mp-roster{display:grid;gap:.55rem}.mp-player{display:flex;align-items:center;justify-content:space-between;gap:1rem;border:1px solid rgba(151,222,240,.18);background:rgba(5,19,29,.58);border-radius:11px;padding:.7rem .8rem}.mp-player span{display:grid}.mp-player b{color:#f4fcff}.mp-player small{color:#8fcada;margin-top:.16rem}.mp-player em{font-style:normal;color:#7df0c2;font-size:.72rem;font-weight:900;letter-spacing:.1em}.mp-player button{padding:.55rem .75rem;min-height:0}.mp-feedback{border-left:3px solid #64dffc;padding:.65rem .8rem!important;background:rgba(23,69,85,.24);color:#dff9ff!important}.mp-note{font-size:.8rem!important;color:rgba(216,239,246,.62)!important}.map-multiplayer-player{fill:#78f0c6;stroke:#06251e;stroke-width:3}.sat-multiplayer-player circle{fill:#78f0c6;stroke:#06251e;stroke-width:2.5}.sat-multiplayer-player text{fill:#effff9;font:800 12px system-ui;paint-order:stroke;stroke:#07151d;stroke-width:4px;stroke-linejoin:round}

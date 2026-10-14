@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#08131e" />
+    <meta name="description" content="ALPINE FREERIDE — browser-based 3D skiing built with Three.js." />
+    <title>ALPINE FREERIDE v0.18.0</title>
+    <link rel="stylesheet" href="./src/styles/main.css?v=01737" />
+    <script type="importmap">
+      {"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/addons/"}}
+    </script>
+    <link rel="modulepreload" href="./vendor/three.module.js" />
+    <link rel="modulepreload" href="./src/Game.js" />
+  </head>
+  <body>
+    <div id="boot-loader" class="boot-loader" aria-live="polite">
+      <div class="boot-backdrop" aria-hidden="true"></div>
+      <div class="boot-vignette" aria-hidden="true"></div>
+      <div class="boot-content">
+        <div class="boot-brandmark" aria-label="WB Games">
+          <svg viewBox="0 0 220 190" role="img" aria-hidden="true">
+            <defs>
+              <linearGradient id="wbFrame" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#dff8ff"/>
+                <stop offset="45%" stop-color="#78d9ff"/>
+                <stop offset="100%" stop-color="#2d83bc"/>
+              </linearGradient>
+              <linearGradient id="wbFace" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#173b54"/>
+                <stop offset="100%" stop-color="#071722"/>
+              </linearGradient>
+            </defs>
+            <path d="M110 8 L192 38 L179 126 Q174 157 110 184 Q46 157 41 126 L28 38 Z" fill="url(#wbFrame)"/>
+            <path d="M110 18 L181 44 L170 122 Q166 148 110 171 Q54 148 50 122 L39 44 Z" fill="url(#wbFace)" stroke="rgba(255,255,255,.28)" stroke-width="2"/>
+            <text x="110" y="116" text-anchor="middle" fill="#f3fcff" font-family="Arial Black, Arial, sans-serif" font-size="70" font-weight="900" letter-spacing="-7">WB</text>
+            <path d="M66 139 H154" stroke="#8edfff" stroke-width="3" stroke-linecap="round" opacity=".75"/>
+          </svg>
+          <span>WB GAMES</span>
+        </div>
+        <div class="boot-title">ALPINE FREERIDE</div>
+        <div id="boot-status" class="boot-status">LOADING MOUNTAIN…</div>
+        <div class="boot-scene" aria-hidden="true">
+          <div class="boot-track"></div>
+          <div class="boot-track-shadow"></div>
+          <div class="boot-skier-ride">
+            <div class="boot-skier-flip">
+              <div class="boot-skier-model">
+                <div class="boot-ski boot-ski-left"></div>
+                <div class="boot-ski boot-ski-right"></div>
+                <div class="boot-leg boot-leg-left"></div>
+                <div class="boot-leg boot-leg-right"></div>
+                <div class="boot-boot boot-boot-left"></div>
+                <div class="boot-boot boot-boot-right"></div>
+                <div class="boot-torso"></div>
+                <div class="boot-hip-pack"></div>
+                <div class="boot-head"></div>
+                <div class="boot-goggle"></div>
+                <div class="boot-arm boot-arm-left"></div>
+                <div class="boot-arm boot-arm-right"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="boot-caption">Optimised startup: map UI and replay tools now initialise after the mountain appears.</p>
+      </div>
+    </div>
+    <style>
+      .boot-loader{position:fixed;inset:0;z-index:99999;overflow:hidden;background:radial-gradient(circle at 50% 18%,rgba(110,204,255,.18),transparent 28%),linear-gradient(180deg,#08131d 0%,#0b1e2b 52%,#07111a 100%);color:#eef8ff;font-family:system-ui,sans-serif}
+      .boot-backdrop,.boot-vignette,.boot-content{position:absolute;inset:0}
+      .boot-backdrop{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%23eff9ff' stop-opacity='.38'/%3E%3Cstop offset='1' stop-color='%2390c7df' stop-opacity='.06'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0 714 L182 592 L330 660 L518 476 L684 590 L842 418 L996 536 L1122 380 L1298 516 L1468 442 L1600 520 L1600 900 L0 900 Z' fill='url(%23g)'/%3E%3Cg fill='none' stroke='%23f5fcff' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg opacity='.16' stroke-width='21'%3E%3Cpath d='M668 352 C 690 306 736 278 788 286 C 846 294 882 345 874 404 C 864 460 823 497 772 497 C 712 497 666 454 659 399'/%3E%3C/g%3E%3Cg opacity='.36' stroke-width='10'%3E%3Cpath d='M790 282 L790 224'/%3E%3Cpath d='M790 317 L852 350'/%3E%3Cpath d='M790 317 L729 344'/%3E%3Cpath d='M790 356 L832 422'/%3E%3Cpath d='M790 356 L748 421'/%3E%3Cpath d='M824 441 L885 463'/%3E%3Cpath d='M747 441 L684 460'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");background-size:cover;background-position:center;opacity:.92;filter:saturate(1.05)}
+      .boot-vignette{background:radial-gradient(circle at 50% 50%,transparent 30%,rgba(5,12,18,.16) 55%,rgba(2,7,12,.72) 100%)}
+      .boot-content{display:grid;place-items:center;padding:2.75rem 1.5rem;text-align:center}
+      .boot-content>*{position:relative;z-index:2}
+      .boot-brandmark{display:grid;justify-items:center;gap:.18rem;margin-bottom:.65rem}
+      .boot-brandmark svg{width:158px;height:auto;display:block;filter:drop-shadow(0 12px 28px rgba(0,0,0,.30)) drop-shadow(0 0 24px rgba(112,216,255,.20))}
+      .boot-brandmark span{font-size:.86rem;font-weight:900;letter-spacing:.42em;color:#d9f7ff;padding-left:.42em;margin-top:-2px}
+      .boot-title{font-size:clamp(2.1rem,5vw,4rem);font-weight:1000;letter-spacing:.18em;text-transform:uppercase;text-shadow:0 10px 40px rgba(0,0,0,.42)}
+      .boot-status{margin-top:.52rem;color:#a7ebff;font-size:.82rem;font-weight:800;letter-spacing:.25em;text-transform:uppercase}
+      .boot-scene{position:relative;width:min(880px,92vw);height:min(310px,36vh);margin-top:1.25rem}
+      .boot-track{position:absolute;left:3%;right:3%;bottom:18%;height:4px;border-radius:999px;background:linear-gradient(90deg,rgba(145,216,245,.04),rgba(255,255,255,.68),rgba(145,216,245,.04));box-shadow:0 0 0 1px rgba(199,242,255,.1),0 0 18px rgba(115,216,255,.18)}
+      .boot-track::before{content:'';position:absolute;left:0;right:0;bottom:-48px;height:128px;background:linear-gradient(180deg,rgba(232,248,255,.34),rgba(219,244,255,.10) 56%,transparent 100%);clip-path:polygon(0 60%,8% 53%,15% 58%,23% 42%,34% 58%,46% 34%,57% 48%,67% 28%,79% 51%,90% 37%,100% 49%,100% 100%,0 100%);opacity:.92}
+      .boot-track-shadow{position:absolute;left:7%;right:7%;bottom:11%;height:26%;background:radial-gradient(ellipse at center,rgba(133,215,255,.14),transparent 70%);filter:blur(18px)}
+      .boot-skier-ride{position:absolute;left:-180px;bottom:20%;width:160px;height:132px;animation:bootRide 2.85s linear infinite;transform-origin:50% 70%;will-change:transform}
+      .boot-skier-flip{position:absolute;left:22px;top:8px;width:116px;height:116px;animation:bootFlip 2.85s linear infinite;transform-origin:50% 62%;will-change:transform}
+      .boot-skier-model{position:absolute;inset:0;filter:drop-shadow(0 10px 18px rgba(0,0,0,.28))}
+      .boot-head,.boot-torso,.boot-arm,.boot-leg,.boot-ski,.boot-boot,.boot-goggle,.boot-hip-pack{position:absolute;display:block}
+      .boot-head{width:24px;height:24px;left:49px;top:15px;border-radius:50%;background:linear-gradient(180deg,#f4fbff,#d9f5ff);box-shadow:inset 0 -3px 0 rgba(0,0,0,.08)}
+      .boot-goggle{width:16px;height:8px;left:53px;top:23px;border-radius:8px;background:linear-gradient(90deg,#143248,#8bf0ff);box-shadow:0 0 8px rgba(108,221,255,.24)}
+      .boot-torso{width:34px;height:44px;left:44px;top:34px;border-radius:16px 16px 14px 14px;background:linear-gradient(180deg,#49b2db,#dff9ff 62%,#b1ecff);transform:rotate(12deg)}
+      .boot-hip-pack{width:26px;height:18px;left:47px;top:70px;border-radius:10px;background:linear-gradient(180deg,#243949,#101b24);transform:rotate(12deg)}
+      .boot-arm{width:34px;height:9px;top:47px;border-radius:999px;background:linear-gradient(90deg,#edfaff,#8edfff);transform-origin:6px 50%}
+      .boot-arm-left{left:19px;transform:rotate(-24deg)}
+      .boot-arm-right{left:67px;transform:rotate(34deg)}
+      .boot-leg{width:12px;height:34px;top:72px;border-radius:10px;background:linear-gradient(180deg,#214761,#0d1d2a);transform-origin:50% 6px}
+      .boot-leg-left{left:48px;transform:rotate(32deg)}
+      .boot-leg-right{left:68px;transform:rotate(-20deg)}
+      .boot-boot{width:16px;height:10px;top:102px;border-radius:4px 6px 7px 4px;background:#111c27}
+      .boot-boot-left{left:41px;transform:rotate(14deg)}
+      .boot-boot-right{left:72px;transform:rotate(-12deg)}
+      .boot-ski{width:66px;height:6px;top:110px;border-radius:999px;background:linear-gradient(90deg,#d9fdff,#8de7ff,#effcff);box-shadow:0 0 9px rgba(124,231,255,.26)}
+      .boot-ski::after{content:'';position:absolute;right:-4px;top:-1px;width:12px;height:8px;border-radius:0 999px 999px 0;background:inherit;transform:skewX(28deg)}
+      .boot-ski-left{left:16px;transform:rotate(18deg)}
+      .boot-ski-right{left:56px;transform:rotate(6deg)}
+      .boot-caption{max-width:min(700px,86vw);margin-top:1.1rem;color:rgba(233,250,255,.72);font-size:.8rem;font-weight:600;letter-spacing:.04em}
+      @keyframes bootRide{0%{transform:translate3d(0,18px,0)}10%{transform:translate3d(82px,16px,0)}20%{transform:translate3d(165px,9px,0)}30%{transform:translate3d(250px,-18px,0)}40%{transform:translate3d(337px,-55px,0)}50%{transform:translate3d(425px,-76px,0)}60%{transform:translate3d(513px,-55px,0)}70%{transform:translate3d(600px,-18px,0)}80%{transform:translate3d(686px,8px,0)}90%{transform:translate3d(772px,16px,0)}100%{transform:translate3d(calc(min(880px,92vw) + 180px),18px,0)}}
+      @keyframes bootFlip{0%{transform:rotate(0deg)}18%{transform:rotate(0deg)}22%{transform:rotate(-3deg)}26%{transform:rotate(-14deg)}32%{transform:rotate(-42deg)}38%{transform:rotate(-84deg)}44%{transform:rotate(-132deg)}50%{transform:rotate(-180deg)}56%{transform:rotate(-228deg)}62%{transform:rotate(-276deg)}68%{transform:rotate(-318deg)}74%{transform:rotate(-346deg)}78%{transform:rotate(-357deg)}82%{transform:rotate(-360deg)}100%{transform:rotate(-360deg)}}
+    </style>
+    <div id="game-shell">
+      <canvas id="game-canvas" aria-label="Alpine Freeride 3D game"></canvas>
+      <div id="vignette"></div>
+
+      <section id="main-menu" class="overlay menu-screen">
+        <div class="brand-lockup"><div class="menu-wb-mark" aria-hidden="true"><span class="menu-wb-shield">WB</span><span class="menu-wb-text">WB GAMES</span></div>
+          <p class="eyebrow">CONTROL · CRAFT · FREESTYLE · v0.18.0</p>
+          <h1>ALPINE<br /><span>FREERIDE</span></h1>
+          <p class="subtitle">A true two-mountain resort: ski the original face into the valley, cross to a new opposite mountain, then explore six intertwined pistes, powder glades, parks, chairs and gondolas.</p>
+        </div>
+        <div class="menu-actions">
+          <button id="play-button" class="primary">START RIDE</button>
+          <button id="run-select-button">CHOOSE RUN</button>
+          <button id="customize-button">CUSTOMISE SKIER</button>
+          <button id="multiplayer-button" class="multiplayer-menu-button">MULTIPLAYER <span>ONLINE</span></button>
+          <button id="battle-pass-button">FREE PASS</button>
+          <button id="challenges-button">CHALLENGES</button>
+          <button id="replay-button">REPLAY EDITOR</button>
+          <button id="settings-button">SETTINGS</button>
+        </div>
+        <p class="menu-footnote">v0.18.0 MULTIPLAYER · RENDER DISTANCE · IMPACT TUNING · Start in the valley · Shift = skis on/off · F = spread eagle · M = satellite map · wheel = zoom · click terrain = marker</p>
+      </section>
+
+      <section id="pause-menu" class="overlay panel-screen hidden" aria-hidden="true">
+        <div class="glass-panel compact">
+          <p class="eyebrow">ALPINE FREERIDE</p>
+          <h2>Paused</h2>
+          <button id="resume-button" class="primary">RESUME</button>
+          <button id="restart-button">RESTART RUN</button>
+          <button id="return-menu-button">HOME</button>
+        </div>
+      </section>
+
+      <section id="info-modal" class="overlay modal-layer hidden" aria-hidden="true">
+        <div class="glass-panel modal-panel">
+          <button id="close-modal" class="close-button" aria-label="Close">×</button>
+          <div id="modal-content"></div>
+        </div>
+      </section>
+
+      <div id="hud" class="hidden" aria-hidden="true">
+        <div class="hud-top-left">
+          <div class="hud-card speed-card">
+            <span id="speed-value">0</span><small>km/h</small>
+          </div>
+          <div class="hud-card altitude-card">
+            <small>ALT</small><span id="altitude-value">0 m</span>
+          </div>
+          <div class="hud-card credit-card">
+            <small>CREDITS</small><span id="credits-value">0</span>
+          </div>
+          <div class="hud-card level-card">
+            <small>LEVEL</small><span id="level-value">1</span><b id="xp-value">0 XP</b>
+          </div>
+          <div class="hud-card combo-card">
+            <small>LINE</small><span id="combo-value">1.0×</span><b id="combo-score">0</b>
+          </div>
+        </div>
+        <div class="hud-top-right">
+          <div id="race-card" class="hud-card race-card hidden">
+            <small id="race-name">RACE</small><span id="race-timer">0.00</span><b id="race-gates">0 / 0</b>
+          </div>
+          <div id="multiplayer-hud" class="hud-card multiplayer-hud hidden"><small>ONLINE</small><span id="multiplayer-room-hud">ROOM</span><b id="multiplayer-count-hud">1/4</b></div>
+          <div class="hud-card status-card">
+            <span id="run-label">SUMMIT</span>
+            <small id="surface-label">GROOMED</small>
+            <small id="state-label">READY</small>
+          </div>
+        </div>
+        <div id="center-message" class="center-message hidden"></div>
+        <div id="trick-popup" class="trick-popup hidden"></div>
+        <div id="interaction-prompt" class="interaction-prompt hidden"></div>
+        <div class="hud-bottom">
+          <div id="control-strip">
+            <span><kbd>A</kbd><kbd>D</kbd> carve</span>
+            <span><kbd>Space</kbd> jump</span>
+            <span><kbd>W</kbd> nose butter · <kbd>S</kbd> brake · in air <kbd>W/S</kbd> flip</span>
+            <span><kbd>LMB/RMB + mouse</kbd> grabs · <kbd>E</kbd> sit on snow / Daffy in air · <kbd>C</kbd> split slide on rail</span>
+            <span><kbd>T</kbd> marker</span>
+            <span><kbd>R</kbd> lift recovery</span>
+            <span><kbd>M</kbd> satellite map</span>
+            <span><kbd>O</kbd> weather / night</span>
+            <span><kbd>Y</kbd> return</span>
+            <span>lift auto-boards in gate</span>
+            <span><kbd>N</kbd> audio</span>
+            <span><kbd>F9</kbd> replay</span>
+            <span><kbd>Esc</kbd> pause</span>
+          </div>
+        </div>
+      </div>
+
+
+
+      <section id="replay-editor" class="overlay replay-layer hidden" aria-hidden="true">
+        <div class="replay-topbar">
+          <div><p class="eyebrow">REPLAY EDITOR</p><h2>Last 45 seconds</h2></div>
+          <div id="replay-meta" class="replay-meta">0 KM/H</div>
+          <button id="replay-close" class="close-button" aria-label="Close replay editor">×</button>
+        </div>
+        <div class="replay-controls">
+          <div class="replay-row replay-primary">
+            <button id="replay-play" class="primary">PLAY</button>
+            <button data-replay-speed="0.25">0.25×</button>
+            <button data-replay-speed="0.5">0.5×</button>
+            <button data-replay-speed="1" class="active">1×</button>
+            <button data-replay-speed="2">2×</button>
+            <button id="replay-camera">CAMERA · RECORDED</button>
+            <button id="replay-loop">LOOP · ON</button>
+          </div>
+          <div class="replay-timeline">
+            <input id="replay-scrub" type="range" min="0" max="1" step="0.05" value="0" aria-label="Replay timeline" />
+            <div class="replay-time-row"><span id="replay-time">0:00.0 / 0:00.0</span><span id="replay-trim">TRIM 0:00.0 → 0:00.0</span></div>
+          </div>
+          <div class="replay-row replay-edit">
+            <button id="replay-in">SET IN</button>
+            <button id="replay-out">SET OUT</button>
+            <button id="replay-reset-trim">RESET TRIM</button>
+            <span>F9 or Esc closes · Recorded / Follow / Side cameras</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="mountain-map" class="overlay map-layer hidden" aria-hidden="true">
+        <div class="map-panel">
+          <div class="map-header"><div><p class="eyebrow">LIVE RESORT MAP</p><h2>Alpine Freeride · v0.18.0</h2></div><button id="close-map" class="close-button" aria-label="Close map">×</button></div>
+          <button id="map-focus">TRANSITION ZONE DETAIL</button>
+          <svg id="mountain-map-svg" viewBox="0 0 900 820" role="img" aria-label="Mountain map with actual piste and lift coordinates"></svg>
+          <p class="map-help">The satellite view shows clean piste names only · station dots set waypoints · mouse wheel zooms · click terrain to place a custom waypoint · press <kbd>M</kbd> to close</p>
+        </div>
+      </section>
+
+      <div id="crosshair" class="hidden" aria-hidden="true"><span></span></div>
+      <div id="damage-flash"></div>
+    </div>
+
+    <script src="./multiplayer-config.js?v=01800"></script>
+    <script type="module" src="./src/main.js?v=01800"></script>
+  </body>
+</html>
